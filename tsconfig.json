@@ -1,10 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es5",
     "lib": ["es6"],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@figma"
-    ]
+    // "lib": ["es6"],
+    // "moduleResolution": "node",
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    // "module": "esnext"
+
+    "typeRoots": ["./node_modules/@types", "./node_modules/@figma"]
+    // "paths": { "typescript": ["./node_modules/typescript/lib"] }
   }
+  // "rootDir": ".",
+  // "include": ["**/*"],
+  // "exclude": ["node_modules", "**/*.spec.ts"]
 }

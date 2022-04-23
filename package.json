@@ -1,15 +1,29 @@
 {
-  "name": "Really-Flatten-Vectors",
+  "name": "figma-plugin-really-flatten-vectors",
   "version": "1.0.0",
   "description": "Your Figma Plugin",
   "main": "code.js",
+  "source": "code.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
-  "author": "",
-  "license": "",
+  "targets": {
+    "main": {
+      "includeNodeModules": true
+    }
+  },
+  "author": "Steven La <mrstevenla@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
-    "@figma/plugin-typings": "*",
+    "@figma/plugin-typings": "^1.44.0",
+    "@parcel/transformer-typescript-tsc": "^2.5.0",
+    "@rollup/plugin-typescript": "^8.3.2",
+    "parcel": "^2.5.0",
+    "rollup": "^2.70.2",
     "typescript": "*"
+  },
+  "dependencies": {
+    "@types/dom-parser": "^0.1.1",
+    "dom-parser": "^0.1.6"
   }
 }
