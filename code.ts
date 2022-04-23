@@ -1,5 +1,3 @@
-import DOMParser from "dom-parser";
-
 type ContainerNode = InstanceNode | FrameNode | ComponentNode | GroupNode;
 function isContainerNode(node: BaseNode): node is ContainerNode {
   return (
@@ -39,28 +37,6 @@ function detachAndUnion(nodes: readonly SceneNode[]): readonly FrameNode[] {
   return frameClones;
 }
 
-const getSinglePath = (svgstring: string) => {
-  let parser = new DOMParser();
-  // let svgDOM = parser.parseFromString(svgstring, "image/svg+xml");
-  let svgDOM = parser.parseFromString(svgstring);
-  let svgEl = svgDOM.getElementsByTagName("svg")[0];
-
-  const paths = svgEl.getElementsByTagName("path");
-  // console.log(paths);
-  // throw new Error();
-  let svgD = [...paths].map((path) => path.getAttribute("d"));
-  let joinedD = svgD.join(" ");
-
-  return {
-    data: joinedD,
-    size: {
-      width: svgEl.getAttribute("width"),
-      height: svgEl.getAttribute("height"),
-    },
-    viewBox: svgEl.getAttribute("viewBox"),
-  };
-};
-
 // somehow unioning something a million times with itself will flatten it out
 // pretty nicely. i have no clue why this works but it does.
 async function reallyFlattenNodes() {
@@ -82,19 +58,24 @@ async function reallyFlattenNodes() {
         reexportOutput
       );
       outputNode = figma.createNodeFromSvg(reexportedSVGString);
-      const outputVector: VectorNode = outputNode.children[0] as VectorNode;
+      const outputVector = figma.flatten([outputNode]);
       outputVector.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }];
-      outputNode.x = node.x + node.width + 20;
-      outputNode.y = node.y;
-      outputNode.name = `flatten(${node.name})`;
-      node.remove();
-      rawSVGNode?.remove();
+      outputVector.x = 0;
+      outputVector.y = 0;
+
+      const outputFrame = figma.createFrame();
+      outputFrame.appendChild(outputVector);
+      outputFrame.x = node.x + node.width + 20;
+      outputFrame.y = node.y;
+      outputFrame.resize(outputVector.width, outputVector.height);
+      outputFrame.name = `flatten(${node.name})`;
+      outputFrame.fills = [];
     } catch (e) {
       console.error(e);
-      // outputNode?.remove();
+      outputNode?.remove();
     }
-    // node.remove();
-    // rawSVGNode?.remove();
+    node.remove();
+    rawSVGNode?.remove();
   });
 
   await Promise.all(promises);

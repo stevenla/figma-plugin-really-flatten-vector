@@ -1,213 +1,532 @@
-function $parcel$interopDefault(a) {
-  return a && a.__esModule ? a.default : a;
+// modules are defined as an array
+// [ module function, map of requires ]
+//
+// map of requires is short require name -> numeric require
+//
+// anything defined in a previous bundle is accessed via the
+// orig method which is the require for previous bundles
+
+(function (modules, entry, mainEntry, parcelRequireName, globalName) {
+  /* eslint-disable no-undef */
+  var globalObject =
+    typeof globalThis !== 'undefined'
+      ? globalThis
+      : typeof self !== 'undefined'
+      ? self
+      : typeof window !== 'undefined'
+      ? window
+      : typeof global !== 'undefined'
+      ? global
+      : {};
+  /* eslint-enable no-undef */
+
+  // Save the require from previous bundle to this closure if any
+  var previousRequire =
+    typeof globalObject[parcelRequireName] === 'function' &&
+    globalObject[parcelRequireName];
+
+  var cache = previousRequire.cache || {};
+  // Do not use `require` to prevent Webpack from trying to bundle this call
+  var nodeRequire =
+    typeof module !== 'undefined' &&
+    typeof module.require === 'function' &&
+    module.require.bind(module);
+
+  function newRequire(name, jumped) {
+    if (!cache[name]) {
+      if (!modules[name]) {
+        // if we cannot find the module within our internal map or
+        // cache jump to the current global require ie. the last bundle
+        // that was added to the page.
+        var currentRequire =
+          typeof globalObject[parcelRequireName] === 'function' &&
+          globalObject[parcelRequireName];
+        if (!jumped && currentRequire) {
+          return currentRequire(name, true);
+        }
+
+        // If there are other bundles on this page the require from the
+        // previous one is saved to 'previousRequire'. Repeat this as
+        // many times as there are bundles until the module is found or
+        // we exhaust the require chain.
+        if (previousRequire) {
+          return previousRequire(name, true);
+        }
+
+        // Try the node require function if it exists.
+        if (nodeRequire && typeof name === 'string') {
+          return nodeRequire(name);
+        }
+
+        var err = new Error("Cannot find module '" + name + "'");
+        err.code = 'MODULE_NOT_FOUND';
+        throw err;
+      }
+
+      localRequire.resolve = resolve;
+      localRequire.cache = {};
+
+      var module = (cache[name] = new newRequire.Module(name));
+
+      modules[name][0].call(
+        module.exports,
+        localRequire,
+        module,
+        module.exports,
+        this
+      );
+    }
+
+    return cache[name].exports;
+
+    function localRequire(x) {
+      var res = localRequire.resolve(x);
+      return res === false ? {} : newRequire(res);
+    }
+
+    function resolve(x) {
+      var id = modules[name][1][x];
+      return id != null ? id : x;
+    }
+  }
+
+  function Module(moduleName) {
+    this.id = moduleName;
+    this.bundle = newRequire;
+    this.exports = {};
+  }
+
+  newRequire.isParcelRequire = true;
+  newRequire.Module = Module;
+  newRequire.modules = modules;
+  newRequire.cache = cache;
+  newRequire.parent = previousRequire;
+  newRequire.register = function (id, exports) {
+    modules[id] = [
+      function (require, module) {
+        module.exports = exports;
+      },
+      {},
+    ];
+  };
+
+  Object.defineProperty(newRequire, 'root', {
+    get: function () {
+      return globalObject[parcelRequireName];
+    },
+  });
+
+  globalObject[parcelRequireName] = newRequire;
+
+  for (var i = 0; i < entry.length; i++) {
+    newRequire(entry[i]);
+  }
+
+  if (mainEntry) {
+    // Expose entry point to Node, AMD or browser globals
+    // Based on https://github.com/ForbesLindesay/umd/blob/master/template.js
+    var mainExports = newRequire(mainEntry);
+
+    // CommonJS
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+      module.exports = mainExports;
+
+      // RequireJS
+    } else if (typeof define === 'function' && define.amd) {
+      define(function () {
+        return mainExports;
+      });
+
+      // <script>
+    } else if (globalName) {
+      this[globalName] = mainExports;
+    }
+  }
+})({"bX0H5":[function(require,module,exports) {
+"use strict";
+var HMR_HOST = null;
+var HMR_PORT = 1234;
+var HMR_SECURE = false;
+var HMR_ENV_HASH = "d6ea1d42532a7575";
+module.bundle.HMR_BUNDLE_ID = "737b6537f843d90b";
+function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
-var $20d88460e26b527b$exports = {};
-var $c2a702e645480fab$exports = {};
-var $6cab3b74aa13c4e8$exports = {};
-var $6cab3b74aa13c4e8$var$tagRegExp = /(<\/?[a-z][a-z0-9]*(?::[a-z][a-z0-9]*)?\s*(?:\s+[a-z0-9-_]+=(?:(?:'[\s\S]*?')|(?:"[\s\S]*?")))*\s*\/?>)|([^<]|<(?![a-z\/]))*/gi, $6cab3b74aa13c4e8$var$attrRegExp = /\s[a-z0-9-_]+\b(\s*=\s*('|")[\s\S]*?\2)?/gi, $6cab3b74aa13c4e8$var$splitAttrRegExp = /(\s[a-z0-9-_]+\b\s*)(?:=(\s*('|")[\s\S]*?\3))?/gi, $6cab3b74aa13c4e8$var$startTagExp = /^<[a-z]/, $6cab3b74aa13c4e8$var$selfCloseTagExp = /\/>$/, $6cab3b74aa13c4e8$var$closeTagExp = /^<\//, $6cab3b74aa13c4e8$var$nodeNameExp = /<\/?([a-z][a-z0-9]*)(?::([a-z][a-z0-9]*))?/i, $6cab3b74aa13c4e8$var$attributeQuotesExp = /^('|")|('|")$/g, $6cab3b74aa13c4e8$var$noClosingTagsExp = /^(?:area|base|br|col|command|embed|hr|img|input|link|meta|param|source)/i;
-var $76eeb9737d33397b$exports = {};
-//https://developer.mozilla.org/en-US/docs/Web/API/Element
-function $76eeb9737d33397b$var$Node(cfg) {
-    this.namespace = cfg.namespace || null;
-    this.text = cfg.text;
-    this._selfCloseTag = cfg.selfCloseTag;
-    Object.defineProperties(this, {
-        nodeType: {
-            value: cfg.nodeType
+function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function _iterableToArray(iter) {
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+}
+function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
+function _createForOfIteratorHelper(o, allowArrayLike) {
+    var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
+    if (!it) {
+        if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+            if (it) o = it;
+            var i = 0;
+            var F = function F() {};
+            return {
+                s: F,
+                n: function n() {
+                    if (i >= o.length) return {
+                        done: true
+                    };
+                    return {
+                        done: false,
+                        value: o[i++]
+                    };
+                },
+                e: function e(_e) {
+                    throw _e;
+                },
+                f: F
+            };
+        }
+        throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    var normalCompletion = true, didErr = false, err;
+    return {
+        s: function s() {
+            it = it.call(o);
         },
-        nodeName: {
-            value: cfg.nodeType == 1 ? cfg.nodeName : '#text'
+        n: function n() {
+            var step = it.next();
+            normalCompletion = step.done;
+            return step;
         },
-        childNodes: {
-            value: cfg.childNodes
+        e: function e(_e2) {
+            didErr = true;
+            err = _e2;
         },
-        firstChild: {
-            get: function() {
-                return this.childNodes[0] || null;
-            }
-        },
-        lastChild: {
-            get: function() {
-                return this.childNodes[this.childNodes.length - 1] || null;
-            }
-        },
-        parentNode: {
-            value: cfg.parentNode || null
-        },
-        attributes: {
-            value: cfg.attributes || []
-        },
-        innerHTML: {
-            get: function() {
-                var result = '', cNode;
-                for(var i = 0, l = this.childNodes.length; i < l; i++){
-                    cNode = this.childNodes[i];
-                    result += cNode.nodeType === 3 ? cNode.text : cNode.outerHTML;
-                }
-                return result;
-            }
-        },
-        outerHTML: {
-            get: function() {
-                if (this.nodeType != 3) {
-                    var str, attrs = (this.attributes.map(function(elem) {
-                        return elem.name + (elem.value ? '="' + elem.value + '"' : '');
-                    }) || []).join(' '), childs = '';
-                    str = '<' + this.nodeName + (attrs ? ' ' + attrs : '') + (this._selfCloseTag ? '/' : '') + '>';
-                    if (!this._selfCloseTag) {
-                        childs = (this._selfCloseTag ? '' : this.childNodes.map(function(child) {
-                            return child.outerHTML;
-                        }) || []).join('');
-                        str += childs;
-                        str += '</' + this.nodeName + '>';
-                    }
-                } else str = this.textContent;
-                return str;
-            }
-        },
-        textContent: {
-            get: function() {
-                if (this.nodeType == $76eeb9737d33397b$var$Node.TEXT_NODE) return this.text;
-                else return this.childNodes.map(function(node) {
-                    return node.textContent;
-                }).join('').replace(/\x20+/g, ' ');
+        f: function f() {
+            try {
+                if (!normalCompletion && it.return != null) it.return();
+            } finally{
+                if (didErr) throw err;
             }
         }
-    });
+    };
 }
-$76eeb9737d33397b$var$Node.prototype.getAttribute = function(attributeName) {
-    for(var i = 0, l = this.attributes.length; i < l; i++){
-        if (this.attributes[i].name == attributeName) return this.attributes[i].value;
-    }
-    return null;
-};
-function $76eeb9737d33397b$var$searchElements(root, conditionFn, onlyFirst) {
-    var result = [];
-    onlyFirst = !!onlyFirst;
-    if (root.nodeType !== 3) for(var i = 0, l = root.childNodes.length; i < l; i++){
-        if (root.childNodes[i].nodeType !== 3 && conditionFn(root.childNodes[i])) {
-            result.push(root.childNodes[i]);
-            if (onlyFirst) break;
+function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+    for(var i = 0, arr2 = new Array(len); i < len; i++)arr2[i] = arr[i];
+    return arr2;
+}
+/* global HMR_HOST, HMR_PORT, HMR_ENV_HASH, HMR_SECURE, chrome, browser */ /*::
+import type {
+  HMRAsset,
+  HMRMessage,
+} from '@parcel/reporter-dev-server/src/HMRServer.js';
+interface ParcelRequire {
+  (string): mixed;
+  cache: {|[string]: ParcelModule|};
+  hotData: mixed;
+  Module: any;
+  parent: ?ParcelRequire;
+  isParcelRequire: true;
+  modules: {|[string]: [Function, {|[string]: string|}]|};
+  HMR_BUNDLE_ID: string;
+  root: ParcelRequire;
+}
+interface ParcelModule {
+  hot: {|
+    data: mixed,
+    accept(cb: (Function) => void): void,
+    dispose(cb: (mixed) => void): void,
+    // accept(deps: Array<string> | string, cb: (Function) => void): void,
+    // decline(): void,
+    _acceptCallbacks: Array<(Function) => void>,
+    _disposeCallbacks: Array<(mixed) => void>,
+  |};
+}
+interface ExtensionContext {
+  runtime: {|
+    reload(): void,
+  |};
+}
+declare var module: {bundle: ParcelRequire, ...};
+declare var HMR_HOST: string;
+declare var HMR_PORT: string;
+declare var HMR_ENV_HASH: string;
+declare var HMR_SECURE: boolean;
+declare var chrome: ExtensionContext;
+declare var browser: ExtensionContext;
+*/ var OVERLAY_ID = '__parcel__error__overlay__';
+var OldModule = module.bundle.Module;
+function Module(moduleName) {
+    OldModule.call(this, moduleName);
+    this.hot = {
+        data: module.bundle.hotData,
+        _acceptCallbacks: [],
+        _disposeCallbacks: [],
+        accept: function accept(fn) {
+            this._acceptCallbacks.push(fn || function() {});
+        },
+        dispose: function dispose(fn) {
+            this._disposeCallbacks.push(fn);
         }
-        result = result.concat($76eeb9737d33397b$var$searchElements(root.childNodes[i], conditionFn));
-    }
-    return onlyFirst ? result[0] : result;
+    };
+    module.bundle.hotData = undefined;
 }
-$76eeb9737d33397b$var$Node.prototype.getElementsByTagName = function(tagName) {
-    return $76eeb9737d33397b$var$searchElements(this, function(elem) {
-        return elem.nodeName == tagName;
-    });
-};
-$76eeb9737d33397b$var$Node.prototype.getElementsByClassName = function(className) {
-    var expr = new RegExp('^(.*?\\s)?' + className + '(\\s.*?)?$');
-    return $76eeb9737d33397b$var$searchElements(this, function(elem) {
-        return elem.attributes.length && expr.test(elem.getAttribute('class'));
-    });
-};
-$76eeb9737d33397b$var$Node.prototype.getElementById = function(id) {
-    return $76eeb9737d33397b$var$searchElements(this, function(elem) {
-        return elem.attributes.length && elem.getAttribute('id') == id;
-    }, true);
-};
-$76eeb9737d33397b$var$Node.prototype.getElementsByName = function(name) {
-    return $76eeb9737d33397b$var$searchElements(this, function(elem) {
-        return elem.attributes.length && elem.getAttribute('name') == name;
-    });
-};
-$76eeb9737d33397b$var$Node.ELEMENT_NODE = 1;
-$76eeb9737d33397b$var$Node.TEXT_NODE = 3;
-$76eeb9737d33397b$exports = $76eeb9737d33397b$var$Node;
-
-
-function $6cab3b74aa13c4e8$var$findByRegExp(html, selector, onlyFirst) {
-    var result = [], tagsCount = 0, tags = html.match($6cab3b74aa13c4e8$var$tagRegExp), composing = false, currentObject = null, matchingSelector, fullNodeName, selfCloseTag, attributes, attrBuffer, attrStr, buffer, tag;
-    for(var i = 0, l = tags.length; i < l; i++){
-        tag = tags[i];
-        fullNodeName = tag.match($6cab3b74aa13c4e8$var$nodeNameExp);
-        matchingSelector = selector.test(tag);
-        if (matchingSelector && !composing) composing = true;
-        if (composing) {
-            if ($6cab3b74aa13c4e8$var$startTagExp.test(tag)) {
-                selfCloseTag = $6cab3b74aa13c4e8$var$selfCloseTagExp.test(tag) || $6cab3b74aa13c4e8$var$noClosingTagsExp.test(fullNodeName[1]);
-                attributes = [];
-                attrStr = tag.match($6cab3b74aa13c4e8$var$attrRegExp) || [];
-                for(var aI = 0, aL = attrStr.length; aI < aL; aI++){
-                    $6cab3b74aa13c4e8$var$splitAttrRegExp.lastIndex = 0;
-                    attrBuffer = $6cab3b74aa13c4e8$var$splitAttrRegExp.exec(attrStr[aI]);
-                    attributes.push({
-                        name: attrBuffer[1].trim(),
-                        value: (attrBuffer[2] || '').trim().replace($6cab3b74aa13c4e8$var$attributeQuotesExp, '')
-                    });
+module.bundle.Module = Module;
+var checkedAssets, acceptedAssets, assetsToAccept /*: Array<[ParcelRequire, string]> */ ;
+function getHostname() {
+    return HMR_HOST || (location.protocol.indexOf('http') === 0 ? location.hostname : 'localhost');
+}
+function getPort() {
+    return HMR_PORT || location.port;
+} // eslint-disable-next-line no-redeclare
+var parent = module.bundle.parent;
+if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
+    var hostname = getHostname();
+    var port = getPort();
+    var protocol = HMR_SECURE || location.protocol == 'https:' && !/localhost|127.0.0.1|0.0.0.0/.test(hostname) ? 'wss' : 'ws';
+    var ws = new WebSocket(protocol + '://' + hostname + (port ? ':' + port : '') + '/'); // $FlowFixMe
+    ws.onmessage = function(event) {
+        checkedAssets = {} /*: {|[string]: boolean|} */ ;
+        acceptedAssets = {} /*: {|[string]: boolean|} */ ;
+        assetsToAccept = [];
+        var data = JSON.parse(event.data);
+        if (data.type === 'update') {
+            // Remove error overlay if there is one
+            if (typeof document !== 'undefined') removeErrorOverlay();
+            var assets = data.assets.filter(function(asset) {
+                return asset.envHash === HMR_ENV_HASH;
+            }); // Handle HMR Update
+            var handled = assets.every(function(asset) {
+                return asset.type === 'css' || asset.type === 'js' && hmrAcceptCheck(module.bundle.root, asset.id, asset.depsByBundle);
+            });
+            if (handled) {
+                console.clear();
+                assets.forEach(function(asset) {
+                    hmrApply(module.bundle.root, asset);
+                });
+                for(var i = 0; i < assetsToAccept.length; i++){
+                    var id = assetsToAccept[i][1];
+                    if (!acceptedAssets[id]) hmrAcceptRun(assetsToAccept[i][0], id);
                 }
-                (currentObject && currentObject.childNodes || result).push(buffer = new $76eeb9737d33397b$exports({
-                    nodeType: 1,
-                    nodeName: fullNodeName[1],
-                    namespace: fullNodeName[2],
-                    attributes: attributes,
-                    childNodes: [],
-                    parentNode: currentObject,
-                    startTag: tag,
-                    selfCloseTag: selfCloseTag
-                }));
-                tagsCount++;
-                if (!onlyFirst && matchingSelector && currentObject) result.push(buffer);
-                if (selfCloseTag) tagsCount--;
-                else currentObject = buffer;
-            } else if ($6cab3b74aa13c4e8$var$closeTagExp.test(tag)) {
-                if (currentObject.nodeName == fullNodeName[1]) {
-                    currentObject = currentObject.parentNode;
-                    tagsCount--;
-                }
-            } else currentObject.childNodes.push(new $76eeb9737d33397b$exports({
-                nodeType: 3,
-                text: tag,
-                parentNode: currentObject
-            }));
-            if (tagsCount == 0) {
-                composing = false;
-                currentObject = null;
-                if (onlyFirst) break;
+            } else if ('reload' in location) location.reload();
+            else {
+                // Web extension context
+                var ext = typeof chrome === 'undefined' ? typeof browser === 'undefined' ? null : browser : chrome;
+                if (ext && ext.runtime && ext.runtime.reload) ext.runtime.reload();
             }
         }
+        if (data.type === 'error') {
+            // Log parcel errors to console
+            var _iterator = _createForOfIteratorHelper(data.diagnostics.ansi), _step;
+            try {
+                for(_iterator.s(); !(_step = _iterator.n()).done;){
+                    var ansiDiagnostic = _step.value;
+                    var stack = ansiDiagnostic.codeframe ? ansiDiagnostic.codeframe : ansiDiagnostic.stack;
+                    console.error('🚨 [parcel]: ' + ansiDiagnostic.message + '\n' + stack + '\n\n' + ansiDiagnostic.hints.join('\n'));
+                }
+            } catch (err) {
+                _iterator.e(err);
+            } finally{
+                _iterator.f();
+            }
+            if (typeof document !== 'undefined') {
+                // Render the fancy html overlay
+                removeErrorOverlay();
+                var overlay = createErrorOverlay(data.diagnostics.html); // $FlowFixMe
+                document.body.appendChild(overlay);
+            }
+        }
+    };
+    ws.onerror = function(e) {
+        console.error(e.message);
+    };
+    ws.onclose = function() {
+        console.warn('[parcel] 🚨 Connection to the HMR server was lost');
+    };
+}
+function removeErrorOverlay() {
+    var overlay = document.getElementById(OVERLAY_ID);
+    if (overlay) {
+        overlay.remove();
+        console.log('[parcel] ✨ Error resolved');
     }
-    return onlyFirst ? result[0] || null : result;
 }
-function $6cab3b74aa13c4e8$var$Dom(rawHTML) {
-    this.rawHTML = rawHTML;
+function createErrorOverlay(diagnostics) {
+    var overlay = document.createElement('div');
+    overlay.id = OVERLAY_ID;
+    var errorHTML = '<div style="background: black; opacity: 0.85; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; font-family: Menlo, Consolas, monospace; z-index: 9999;">';
+    var _iterator2 = _createForOfIteratorHelper(diagnostics), _step2;
+    try {
+        for(_iterator2.s(); !(_step2 = _iterator2.n()).done;){
+            var diagnostic = _step2.value;
+            var stack = diagnostic.codeframe ? diagnostic.codeframe : diagnostic.stack;
+            errorHTML += "\n      <div>\n        <div style=\"font-size: 18px; font-weight: bold; margin-top: 20px;\">\n          \uD83D\uDEA8 ".concat(diagnostic.message, "\n        </div>\n        <pre>").concat(stack, "</pre>\n        <div>\n          ").concat(diagnostic.hints.map(function(hint) {
+                return '<div>💡 ' + hint + '</div>';
+            }).join(''), "\n        </div>\n        ").concat(diagnostic.documentation ? "<div>\uD83D\uDCDD <a style=\"color: violet\" href=\"".concat(diagnostic.documentation, "\" target=\"_blank\">Learn more</a></div>") : '', "\n      </div>\n    ");
+        }
+    } catch (err) {
+        _iterator2.e(err);
+    } finally{
+        _iterator2.f();
+    }
+    errorHTML += '</div>';
+    overlay.innerHTML = errorHTML;
+    return overlay;
 }
-$6cab3b74aa13c4e8$var$Dom.prototype.getElementsByClassName = function(className) {
-    var selector = new RegExp('class=(\'|")(.*?\\s)?' + className + '(\\s.*?)?\\1');
-    return $6cab3b74aa13c4e8$var$findByRegExp(this.rawHTML, selector);
-};
-$6cab3b74aa13c4e8$var$Dom.prototype.getElementsByTagName = function(tagName) {
-    var selector = new RegExp('^<' + tagName, 'i');
-    return $6cab3b74aa13c4e8$var$findByRegExp(this.rawHTML, selector);
-};
-$6cab3b74aa13c4e8$var$Dom.prototype.getElementById = function(id) {
-    var selector = new RegExp('id=(\'|")' + id + '\\1');
-    return $6cab3b74aa13c4e8$var$findByRegExp(this.rawHTML, selector, true);
-};
-$6cab3b74aa13c4e8$var$Dom.prototype.getElementsByName = function(name) {
-    return this.getElementsByAttribute('name', name);
-};
-$6cab3b74aa13c4e8$var$Dom.prototype.getElementsByAttribute = function(attr, value) {
-    var selector = new RegExp('\\s' + attr + '=(\'|")' + value + '\\1');
-    return $6cab3b74aa13c4e8$var$findByRegExp(this.rawHTML, selector);
-};
-$6cab3b74aa13c4e8$exports = $6cab3b74aa13c4e8$var$Dom;
+function getParents(bundle, id) /*: Array<[ParcelRequire, string]> */ {
+    var modules = bundle.modules;
+    if (!modules) return [];
+    var parents = [];
+    var k, d, dep;
+    for(k in modules)for(d in modules[k][1]){
+        dep = modules[k][1][d];
+        if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) parents.push([
+            bundle,
+            k
+        ]);
+    }
+    if (bundle.parent) parents = parents.concat(getParents(bundle.parent, id));
+    return parents;
+}
+function updateLink(link) {
+    var newLink = link.cloneNode();
+    newLink.onload = function() {
+        if (link.parentNode !== null) // $FlowFixMe
+        link.parentNode.removeChild(link);
+    };
+    newLink.setAttribute('href', link.getAttribute('href').split('?')[0] + '?' + Date.now()); // $FlowFixMe
+    link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+var cssTimeout = null;
+function reloadCSS() {
+    if (cssTimeout) return;
+    cssTimeout = setTimeout(function() {
+        var links = document.querySelectorAll('link[rel="stylesheet"]');
+        for(var i = 0; i < links.length; i++){
+            // $FlowFixMe[incompatible-type]
+            var href = links[i].getAttribute('href');
+            var hostname = getHostname();
+            var servedFromHMRServer = hostname === 'localhost' ? new RegExp('^(https?:\\/\\/(0.0.0.0|127.0.0.1)|localhost):' + getPort()).test(href) : href.indexOf(hostname + ':' + getPort());
+            var absolute = /^https?:\/\//i.test(href) && href.indexOf(location.origin) !== 0 && !servedFromHMRServer;
+            if (!absolute) updateLink(links[i]);
+        }
+        cssTimeout = null;
+    }, 50);
+}
+function hmrApply(bundle, asset) {
+    var modules = bundle.modules;
+    if (!modules) return;
+    if (asset.type === 'css') reloadCSS();
+    else if (asset.type === 'js') {
+        var deps = asset.depsByBundle[bundle.HMR_BUNDLE_ID];
+        if (deps) {
+            if (modules[asset.id]) {
+                // Remove dependencies that are removed and will become orphaned.
+                // This is necessary so that if the asset is added back again, the cache is gone, and we prevent a full page reload.
+                var oldDeps = modules[asset.id][1];
+                for(var dep in oldDeps)if (!deps[dep] || deps[dep] !== oldDeps[dep]) {
+                    var id = oldDeps[dep];
+                    var parents = getParents(module.bundle.root, id);
+                    if (parents.length === 1) hmrDelete(module.bundle.root, id);
+                }
+            }
+            var fn = new Function('require', 'module', 'exports', asset.output);
+            modules[asset.id] = [
+                fn,
+                deps
+            ];
+        } else if (bundle.parent) hmrApply(bundle.parent, asset);
+    }
+}
+function hmrDelete(bundle, id1) {
+    var modules = bundle.modules;
+    if (!modules) return;
+    if (modules[id1]) {
+        // Collect dependencies that will become orphaned when this module is deleted.
+        var deps = modules[id1][1];
+        var orphans = [];
+        for(var dep in deps){
+            var parents = getParents(module.bundle.root, deps[dep]);
+            if (parents.length === 1) orphans.push(deps[dep]);
+        } // Delete the module. This must be done before deleting dependencies in case of circular dependencies.
+        delete modules[id1];
+        delete bundle.cache[id1]; // Now delete the orphans.
+        orphans.forEach(function(id) {
+            hmrDelete(module.bundle.root, id);
+        });
+    } else if (bundle.parent) hmrDelete(bundle.parent, id1);
+}
+function hmrAcceptCheck(bundle, id, depsByBundle) {
+    if (hmrAcceptCheckOne(bundle, id, depsByBundle)) return true;
+     // Traverse parents breadth first. All possible ancestries must accept the HMR update, or we'll reload.
+    var parents = getParents(module.bundle.root, id);
+    var accepted = false;
+    while(parents.length > 0){
+        var v = parents.shift();
+        var a = hmrAcceptCheckOne(v[0], v[1], null);
+        if (a) // If this parent accepts, stop traversing upward, but still consider siblings.
+        accepted = true;
+        else {
+            // Otherwise, queue the parents in the next level upward.
+            var p = getParents(module.bundle.root, v[1]);
+            if (p.length === 0) {
+                // If there are no parents, then we've reached an entry without accepting. Reload.
+                accepted = false;
+                break;
+            }
+            parents.push.apply(parents, _toConsumableArray(p));
+        }
+    }
+    return accepted;
+}
+function hmrAcceptCheckOne(bundle, id, depsByBundle) {
+    var modules = bundle.modules;
+    if (!modules) return;
+    if (depsByBundle && !depsByBundle[bundle.HMR_BUNDLE_ID]) {
+        // If we reached the root bundle without finding where the asset should go,
+        // there's nothing to do. Mark as "accepted" so we don't reload the page.
+        if (!bundle.parent) return true;
+        return hmrAcceptCheck(bundle.parent, id, depsByBundle);
+    }
+    if (checkedAssets[id]) return true;
+    checkedAssets[id] = true;
+    var cached = bundle.cache[id];
+    assetsToAccept.push([
+        bundle,
+        id
+    ]);
+    if (!cached || cached.hot && cached.hot._acceptCallbacks.length) return true;
+}
+function hmrAcceptRun(bundle, id) {
+    var cached = bundle.cache[id];
+    bundle.hotData = {};
+    if (cached && cached.hot) cached.hot.data = bundle.hotData;
+    if (cached && cached.hot && cached.hot._disposeCallbacks.length) cached.hot._disposeCallbacks.forEach(function(cb) {
+        cb(bundle.hotData);
+    });
+    delete bundle.cache[id];
+    bundle(id);
+    cached = bundle.cache[id];
+    if (cached && cached.hot && cached.hot._acceptCallbacks.length) cached.hot._acceptCallbacks.forEach(function(cb) {
+        var assetsToAlsoAccept = cb(function() {
+            return getParents(module.bundle.root, id);
+        });
+        if (assetsToAlsoAccept && assetsToAccept.length) // $FlowFixMe[method-unbinding]
+        assetsToAccept.push.apply(assetsToAccept, assetsToAlsoAccept);
+    });
+    acceptedAssets[id] = true;
+}
 
-
-function $c2a702e645480fab$var$DomParser() {}
-$c2a702e645480fab$var$DomParser.prototype.parseFromString = function(html) {
-    return new $6cab3b74aa13c4e8$exports(html);
-};
-$c2a702e645480fab$exports = $c2a702e645480fab$var$DomParser;
-
-
-$20d88460e26b527b$exports = $c2a702e645480fab$exports;
-
-
-var $8658ba70bd42f784$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+},{}],"bMCHl":[function(require,module,exports) {
+var __awaiter = this && this.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
         return value instanceof P ? value : new P(function(resolve) {
             resolve(value);
@@ -234,7 +553,7 @@ var $8658ba70bd42f784$var$__awaiter = undefined && undefined.__awaiter || functi
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var $8658ba70bd42f784$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+var __generator = this && this.__generator || function(thisArg, body) {
     var _ = {
         label: 0,
         sent: function() {
@@ -329,7 +648,7 @@ var $8658ba70bd42f784$var$__generator = undefined && undefined.__generator || fu
         };
     }
 };
-var $8658ba70bd42f784$var$__read = undefined && undefined.__read || function(o, n) {
+var __read = this && this.__read || function(o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -348,7 +667,7 @@ var $8658ba70bd42f784$var$__read = undefined && undefined.__read || function(o, 
     }
     return ar;
 };
-var $8658ba70bd42f784$var$__spreadArray = undefined && undefined.__spreadArray || function(to, from, pack) {
+var __spreadArray = this && this.__spreadArray || function(to, from, pack) {
     if (pack || arguments.length === 2) {
         for(var i = 0, l = from.length, ar; i < l; i++)if (ar || !(i in from)) {
             if (!ar) ar = Array.prototype.slice.call(from, 0, i);
@@ -357,10 +676,10 @@ var $8658ba70bd42f784$var$__spreadArray = undefined && undefined.__spreadArray |
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-function $8658ba70bd42f784$var$isContainerNode(node) {
+function isContainerNode(node) {
     return node.type === "INSTANCE" || node.type === "FRAME" || node.type === "COMPONENT" || node.type === "GROUP";
 }
-function $8658ba70bd42f784$var$cloneFrame(ref) {
+function cloneFrame(ref) {
     var clone = figma.createFrame();
     clone.name = ref.name;
     // clone.fills = "fills" in ref ? ref.fills : [];
@@ -371,14 +690,14 @@ function $8658ba70bd42f784$var$cloneFrame(ref) {
     clone.rotation = "rotation" in ref ? ref.rotation : 0;
     return clone;
 }
-function $8658ba70bd42f784$var$detachAndUnion(nodes) {
+function detachAndUnion(nodes) {
     var clones = nodes.map(function(node) {
         return node.clone();
     });
     var frameClones = clones.map(function(node) {
-        return $8658ba70bd42f784$var$cloneFrame(node);
+        return cloneFrame(node);
     });
-    clones.filter($8658ba70bd42f784$var$isContainerNode).forEach(function(node, i) {
+    clones.filter(isContainerNode).forEach(function(node, i) {
         return figma.union([
             node
         ], frameClones[i]);
@@ -392,41 +711,20 @@ function $8658ba70bd42f784$var$detachAndUnion(nodes) {
     });
     return frameClones;
 }
-var $8658ba70bd42f784$var$getSinglePath = function(svgstring) {
-    var parser = new (/*@__PURE__*/$parcel$interopDefault($20d88460e26b527b$exports))();
-    // let svgDOM = parser.parseFromString(svgstring, "image/svg+xml");
-    var svgDOM = parser.parseFromString(svgstring);
-    var svgEl = svgDOM.getElementsByTagName("svg")[0];
-    var paths = svgEl.getElementsByTagName("path");
-    // console.log(paths);
-    // throw new Error();
-    var svgD = $8658ba70bd42f784$var$__spreadArray([], $8658ba70bd42f784$var$__read(paths), false).map(function(path) {
-        return path.getAttribute("d");
-    });
-    var joinedD = svgD.join(" ");
-    return {
-        data: joinedD,
-        size: {
-            width: svgEl.getAttribute("width"),
-            height: svgEl.getAttribute("height")
-        },
-        viewBox: svgEl.getAttribute("viewBox")
-    };
-};
 // somehow unioning something a million times with itself will flatten it out
 // pretty nicely. i have no clue why this works but it does.
-function $8658ba70bd42f784$var$reallyFlattenNodes() {
-    return $8658ba70bd42f784$var$__awaiter(this, void 0, void 0, function() {
+function reallyFlattenNodes() {
+    return __awaiter(this, void 0, void 0, function() {
         var detachedNodes, promises;
         var _this = this;
-        return $8658ba70bd42f784$var$__generator(this, function(_a1) {
+        return __generator(this, function(_a1) {
             switch(_a1.label){
                 case 0:
-                    detachedNodes = $8658ba70bd42f784$var$detachAndUnion(figma.currentPage.selection);
+                    detachedNodes = detachAndUnion(figma.currentPage.selection);
                     promises = detachedNodes.map(function(node) {
-                        return $8658ba70bd42f784$var$__awaiter(_this, void 0, void 0, function() {
-                            var rawSVGNode, outputNode, exportOutput, svgString, reexportOutput, reexportedSVGString, outputVector, e_1;
-                            return $8658ba70bd42f784$var$__generator(this, function(_a) {
+                        return __awaiter(_this, void 0, void 0, function() {
+                            var rawSVGNode, outputNode, exportOutput, svgString, reexportOutput, reexportedSVGString, outputVector, outputFrame, e_1;
+                            return __generator(this, function(_a) {
                                 switch(_a.label){
                                     case 0:
                                         rawSVGNode = null;
@@ -447,7 +745,7 @@ function $8658ba70bd42f784$var$reallyFlattenNodes() {
                                         ];
                                     case 2:
                                         exportOutput = _a.sent();
-                                        svgString = String.fromCharCode.apply(String, $8658ba70bd42f784$var$__spreadArray([], $8658ba70bd42f784$var$__read(exportOutput), false));
+                                        svgString = String.fromCharCode.apply(String, __spreadArray([], __read(exportOutput), false));
                                         rawSVGNode = figma.createNodeFromSvg(svgString);
                                         figma.flatten([
                                             figma.union(rawSVGNode.children, rawSVGNode)
@@ -462,7 +760,9 @@ function $8658ba70bd42f784$var$reallyFlattenNodes() {
                                         reexportOutput = _a.sent();
                                         reexportedSVGString = String.fromCharCode.apply(null, reexportOutput);
                                         outputNode = figma.createNodeFromSvg(reexportedSVGString);
-                                        outputVector = outputNode.children[0];
+                                        outputVector = figma.flatten([
+                                            outputNode
+                                        ]);
                                         outputVector.fills = [
                                             {
                                                 type: "SOLID",
@@ -473,11 +773,15 @@ function $8658ba70bd42f784$var$reallyFlattenNodes() {
                                                 }
                                             }
                                         ];
-                                        outputNode.x = node.x + node.width + 20;
-                                        outputNode.y = node.y;
-                                        outputNode.name = "flatten(".concat(node.name, ")");
-                                        node.remove();
-                                        rawSVGNode === null || rawSVGNode === void 0 || rawSVGNode.remove();
+                                        outputVector.x = 0;
+                                        outputVector.y = 0;
+                                        outputFrame = figma.createFrame();
+                                        outputFrame.appendChild(outputVector);
+                                        outputFrame.x = node.x + node.width + 20;
+                                        outputFrame.y = node.y;
+                                        outputFrame.resize(outputVector.width, outputVector.height);
+                                        outputFrame.name = "flatten(".concat(node.name, ")");
+                                        outputFrame.fills = [];
                                         return [
                                             3 /*break*/ ,
                                             5
@@ -485,11 +789,14 @@ function $8658ba70bd42f784$var$reallyFlattenNodes() {
                                     case 4:
                                         e_1 = _a.sent();
                                         console.error(e_1);
+                                        outputNode === null || outputNode === void 0 || outputNode.remove();
                                         return [
                                             3 /*break*/ ,
                                             5
                                         ];
                                     case 5:
+                                        node.remove();
+                                        rawSVGNode === null || rawSVGNode === void 0 || rawSVGNode.remove();
                                         return [
                                             2 /*return*/ 
                                         ];
@@ -510,10 +817,10 @@ function $8658ba70bd42f784$var$reallyFlattenNodes() {
         });
     });
 }
-function $8658ba70bd42f784$var$main() {
-    return $8658ba70bd42f784$var$__awaiter(this, void 0, void 0, function() {
+function main() {
+    return __awaiter(this, void 0, void 0, function() {
         var e_2;
-        return $8658ba70bd42f784$var$__generator(this, function(_a) {
+        return __generator(this, function(_a) {
             switch(_a.label){
                 case 0:
                     _a.trys.push([
@@ -524,7 +831,7 @@ function $8658ba70bd42f784$var$main() {
                     ]);
                     return [
                         4 /*yield*/ ,
-                        $8658ba70bd42f784$var$reallyFlattenNodes()
+                        reallyFlattenNodes()
                     ];
                 case 1:
                     _a.sent();
@@ -547,7 +854,8 @@ function $8658ba70bd42f784$var$main() {
         });
     });
 }
-$8658ba70bd42f784$var$main();
+main();
 
+},{}]},["bX0H5","bMCHl"], "bMCHl", "parcelRequired8d9")
 
 //# sourceMappingURL=code.js.map

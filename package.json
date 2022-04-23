@@ -2,14 +2,17 @@
   "name": "figma-plugin-really-flatten-vectors",
   "version": "1.0.0",
   "description": "Your Figma Plugin",
-  "main": "code.js",
+  "dest": "code.js",
   "source": "code.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "./node_modules/.bin/parcel build",
+    "watch": "./node_modules/.bin/parcel watch"
   },
   "targets": {
-    "main": {
-      "includeNodeModules": true
+    "dest": {
+      "includeNodeModules": true,
+      "context": "browser",
+      "outputFormat": "global"
     }
   },
   "author": "Steven La <mrstevenla@gmail.com>",
