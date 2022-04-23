@@ -68,15 +68,14 @@ function cloneAndFlatten(nodes: readonly SceneNode[]): VectorNode {
     return unionNode;
   });
 
-  const flattenedNode = figma.flatten(clones);
+  const flattenedNode = figma.flatten([figma.union(clones, clones[0].parent)]);
   flattenedNode.fills = fillToUse?.length ? fillToUse : [DEFAULT_PAINT];
   return flattenedNode;
 }
 
 /**
  * Flattens a bunch of vector nodes into a single path.
- * Exporting an SVG then re-importing it is a pretty reliable way of merging
- * overlapping paths in a vector. Not sure why, but it works great!
+ * Creating a union, then flattening that union will merge overlapping paths.
  */
 async function reallyFlattenNodes(
   nodes: readonly SceneNode[]
@@ -86,34 +85,14 @@ async function reallyFlattenNodes(
   }
   const nameToUse = nodes.length === 1 ? nodes[0].name : undefined;
 
-  // Flatten the nodes and export it as an SVG
   const flattenedNode = cloneAndFlatten(nodes);
-  const exportData = await flattenedNode.exportAsync({ format: "SVG" });
-  const exportSVGString = String.fromCharCode(...exportData);
-
-  // Generate a FrameNode containing a VectorNode that has the SVG's
-  // overlapping paths merged.
-  const outputFrameNode = figma.createNodeFromSvg(exportSVGString);
-
-  // Flatten the VectorNode if multiple vectors were created. This shouldn't
-  // happen but it's here for safety.
-  const outputVectorNode = figma.flatten([
-    figma.union(outputFrameNode.children, outputFrameNode),
-  ]);
-  outputVectorNode.fills = flattenedNode.fills;
-  outputFrameNode.parent.appendChild(outputVectorNode);
-  const originalX = flattenedNode.absoluteTransform[0][2];
-  outputVectorNode.x = originalX + flattenedNode.width + 40;
-  const originalY = flattenedNode.absoluteTransform[1][2];
-  outputVectorNode.y = originalY;
-  outputVectorNode.exportSettings = [{ format: "SVG" }];
+  flattenedNode.exportSettings = [{ format: "SVG" }];
+  flattenedNode.x += flattenedNode.width + 40;
   if (nameToUse != null) {
-    outputVectorNode.name = `flatten(${nameToUse})`;
+    flattenedNode.name = `flatten(${nameToUse})`;
   }
 
-  outputFrameNode.remove();
-  flattenedNode.remove();
-  return outputVectorNode;
+  return flattenedNode;
 }
 
 async function main() {
