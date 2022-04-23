@@ -45,6 +45,8 @@ async function reallyFlattenNodes() {
   const promises = detachedNodes.map(async (node) => {
     let rawSVGNode: FrameNode | null = null;
     let outputNode: FrameNode | null = null;
+    let outputFrame: FrameNode | null = null;
+    let outputVector: VectorNode | null = null;
     try {
       const exportOutput = await node.exportAsync({ format: "SVG" });
       const svgString = String.fromCharCode(...exportOutput);
@@ -58,12 +60,12 @@ async function reallyFlattenNodes() {
         reexportOutput
       );
       outputNode = figma.createNodeFromSvg(reexportedSVGString);
-      const outputVector = figma.flatten([outputNode]);
+      outputVector = figma.flatten([outputNode]);
       outputVector.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }];
       outputVector.x = 0;
       outputVector.y = 0;
 
-      const outputFrame = figma.createFrame();
+      outputFrame = figma.createFrame();
       outputFrame.appendChild(outputVector);
       outputFrame.x = node.x + node.width + 20;
       outputFrame.y = node.y;
@@ -73,6 +75,8 @@ async function reallyFlattenNodes() {
     } catch (e) {
       console.error(e);
       outputNode?.remove();
+      outputFrame?.remove();
+      outputVector?.remove();
     }
     node.remove();
     rawSVGNode?.remove();
