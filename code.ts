@@ -52,7 +52,7 @@ function cloneAndFlatten(nodes: readonly SceneNode[]): SceneNode {
 /**
  * Flattens a bunch of vector nodes into a single path.
  * Exporting an SVG then re-importing it is a pretty reliable way of merging
- * the paths in a vector. Not sure why, but it works.
+ * overlapping paths in a vector. Not sure why, but it works great!
  */
 async function reallyFlattenNodes(
   nodes: readonly SceneNode[]
@@ -63,23 +63,26 @@ async function reallyFlattenNodes(
   const nameToUse = nodes.length === 1 ? nodes[0].name : undefined;
   const flattenedNode = cloneAndFlatten(nodes);
 
-  const firstExport = await flattenedNode.exportAsync({ format: "SVG" });
-  const firstSVGString = String.fromCharCode(...firstExport);
+  const exportData = await flattenedNode.exportAsync({ format: "SVG" });
+  const exportSVGString = String.fromCharCode(...exportData);
 
-  const outputFrameNode = figma.createNodeFromSvg(firstSVGString);
-  const outputVectorNode = figma.flatten([
-    figma.union(outputFrameNode.children, outputFrameNode),
-  ]);
-  const originalX = flattenedNode.absoluteTransform[0][2];
-  const originalY = flattenedNode.absoluteTransform[1][2];
-  outputFrameNode.x = originalX + flattenedNode.width + 40;
-  outputFrameNode.y = originalY;
-  outputVectorNode.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }];
-
-  flattenedNode.remove();
+  const outputFrameNode = figma.createNodeFromSvg(exportSVGString);
   if (nameToUse != null) {
     outputFrameNode.name = `flatten(${nameToUse})`;
   }
+  outputFrameNode.clipsContent = false;
+  outputFrameNode.exportSettings = [{ format: "SVG" }];
+  const originalX = flattenedNode.absoluteTransform[0][2];
+  outputFrameNode.x = originalX + flattenedNode.width + 40;
+  const originalY = flattenedNode.absoluteTransform[1][2];
+  outputFrameNode.y = originalY;
+
+  const outputVectorNode = figma.flatten([
+    figma.union(outputFrameNode.children, outputFrameNode),
+  ]);
+  outputVectorNode.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }];
+
+  flattenedNode.remove();
   return outputFrameNode;
 }
 
