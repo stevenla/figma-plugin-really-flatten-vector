@@ -1,8 +1,11 @@
 type GeometryNode = Extract<SceneNode, GeometryMixin>;
+const DEFAULT_PAINT: SolidPaint = {
+  type: "SOLID",
+  color: { r: 128, g: 128, b: 128 },
+};
 
 /**
- * Returns true if the node implements GeometryMixin,
- * ie it can run outlineStroke().
+ * Returns true if the node implements GeometryMixin, ie has outlineStroke().
  */
 function isGeometryNode(node: SceneNode): node is GeometryNode {
   return "outlineStroke" in node;
@@ -12,19 +15,38 @@ function isGeometryNode(node: SceneNode): node is GeometryNode {
  * Clones a list of nodes and flattens them into one vector. Their paths
  * shouldn't be simplified at this stage yet.
  */
-function cloneAndFlatten(nodes: readonly SceneNode[]): SceneNode {
+function cloneAndFlatten(nodes: readonly SceneNode[]): VectorNode {
   if (nodes.length === 0) {
     throw new Error("No nodes selected");
+  }
+
+  let fillToUse: null | Paint[] = null;
+  function setFillIfNonContainer(node: SceneNode) {
+    // If there isn't a fill already set, and the node isn't a frame, and the
+    // node has fills, then set the fill to use
+    if (
+      fillToUse == null &&
+      node != null &&
+      node.type !== "FRAME" &&
+      "fills" in node &&
+      Array.isArray(node.fills) &&
+      node.fills.length > 0
+    ) {
+      fillToUse = [...node.fills];
+    }
   }
 
   const clones = nodes.map((node) => {
     let clone: SceneNode = node.clone();
     let outlinedNode: VectorNode = null;
 
+    setFillIfNonContainer(node);
+
     // This will create a new node with the outlined stroke as a path. Save it
     // and add it to the union for flattening later.
     if (isGeometryNode(node)) {
       outlinedNode = node.outlineStroke();
+      setFillIfNonContainer(outlinedNode);
     }
 
     // Outline any nested strokes if possible
@@ -32,8 +54,10 @@ function cloneAndFlatten(nodes: readonly SceneNode[]): SceneNode {
       clone
         .findChildren((child) => isGeometryNode(child))
         .forEach((child: GeometryNode) => {
+          setFillIfNonContainer(child);
           const vectorNode = child.outlineStroke();
           if (vectorNode) {
+            setFillIfNonContainer(vectorNode);
             child.parent.appendChild(vectorNode);
           }
         });
@@ -44,6 +68,7 @@ function cloneAndFlatten(nodes: readonly SceneNode[]): SceneNode {
   });
 
   const flattenedNode = figma.flatten(clones);
+  flattenedNode.fills = fillToUse != null ? fillToUse : [DEFAULT_PAINT];
   return flattenedNode;
 }
 
@@ -59,11 +84,14 @@ async function reallyFlattenNodes(
     throw new Error("No nodes selected");
   }
   const nameToUse = nodes.length === 1 ? nodes[0].name : undefined;
-  const flattenedNode = cloneAndFlatten(nodes);
 
+  // Flatten the nodes and export it as an SVG
+  const flattenedNode = cloneAndFlatten(nodes);
   const exportData = await flattenedNode.exportAsync({ format: "SVG" });
   const exportSVGString = String.fromCharCode(...exportData);
 
+  // Generate a FrameNode containing a VectorNode that has the SVG's
+  // overlapping paths merged.
   const outputFrameNode = figma.createNodeFromSvg(exportSVGString);
   if (nameToUse != null) {
     outputFrameNode.name = `flatten(${nameToUse})`;
@@ -75,10 +103,12 @@ async function reallyFlattenNodes(
   const originalY = flattenedNode.absoluteTransform[1][2];
   outputFrameNode.y = originalY;
 
+  // Flatten the VectorNode if multiple vectors were created. This shouldn't
+  // happen but it's here for safety.
   const outputVectorNode = figma.flatten([
     figma.union(outputFrameNode.children, outputFrameNode),
   ]);
-  outputVectorNode.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }];
+  outputVectorNode.fills = flattenedNode.fills;
 
   flattenedNode.remove();
   return outputFrameNode;
