@@ -1,94 +1,102 @@
-type ContainerNode = InstanceNode | FrameNode | ComponentNode | GroupNode;
-function isContainerNode(node: BaseNode): node is ContainerNode {
-  return (
-    node.type === "INSTANCE" ||
-    node.type === "FRAME" ||
-    node.type === "COMPONENT" ||
-    node.type === "GROUP"
-  );
+type GeometryNode = Extract<SceneNode, GeometryMixin>;
+
+/**
+ * Returns true if the node implements GeometryMixin,
+ * ie it can run outlineStroke().
+ */
+function isGeometryNode(node: SceneNode): node is GeometryNode {
+  return "outlineStroke" in node;
 }
 
-function cloneFrame(ref: SceneNode): FrameNode {
-  let clone = figma.createFrame();
-  clone.name = ref.name;
-  // clone.fills = "fills" in ref ? ref.fills : [];
-  clone.fills = [];
-  clone.resize(ref.width, ref.height);
-  clone.x = ref.x;
-  clone.y = ref.y;
-  clone.rotation = "rotation" in ref ? ref.rotation : 0;
-  return clone;
-}
+/**
+ * Clones a list of nodes and flattens them into one vector. Their paths
+ * shouldn't be simplified at this stage yet.
+ */
+function cloneAndFlatten(nodes: readonly SceneNode[]): SceneNode {
+  if (nodes.length === 0) {
+    throw new Error("No nodes selected");
+  }
 
-function detachAndUnion(nodes: readonly SceneNode[]): readonly FrameNode[] {
-  const clones = nodes.map((node) => node.clone());
-  const frameClones = clones.map((node) => cloneFrame(node));
+  const clones = nodes.map((node) => {
+    let clone: SceneNode | null = null;
 
-  clones
-    .filter(isContainerNode)
-    .forEach((node, i) => figma.union([node], frameClones[i]));
-
-  frameClones.forEach((node) =>
-    node
-      .findChildren((child) => child.type === "VECTOR")
-      .map((child) => (child as VectorNode).outlineStroke())
-  );
-
-  return frameClones;
-}
-
-// somehow unioning something a million times with itself will flatten it out
-// pretty nicely. i have no clue why this works but it does.
-async function reallyFlattenNodes() {
-  const detachedNodes = detachAndUnion(figma.currentPage.selection);
-
-  const promises = detachedNodes.map(async (node) => {
-    let rawSVGNode: FrameNode | null = null;
-    let outputNode: FrameNode | null = null;
-    let outputFrame: FrameNode | null = null;
-    let outputVector: VectorNode | null = null;
-    try {
-      const exportOutput = await node.exportAsync({ format: "SVG" });
-      const svgString = String.fromCharCode(...exportOutput);
-
-      rawSVGNode = figma.createNodeFromSvg(svgString);
-      figma.flatten([figma.union(rawSVGNode.children, rawSVGNode)]);
-
-      const reexportOutput = await rawSVGNode.exportAsync({ format: "SVG" });
-      const reexportedSVGString = String.fromCharCode.apply(
-        null,
-        reexportOutput
-      );
-      outputNode = figma.createNodeFromSvg(reexportedSVGString);
-      outputVector = figma.flatten([outputNode]);
-      outputVector.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }];
-      outputVector.x = 0;
-      outputVector.y = 0;
-
-      outputFrame = figma.createFrame();
-      outputFrame.appendChild(outputVector);
-      outputFrame.x = node.x + node.width + 20;
-      outputFrame.y = node.y;
-      outputFrame.resize(outputVector.width, outputVector.height);
-      outputFrame.name = `flatten(${node.name})`;
-      outputFrame.fills = [];
-    } catch (e) {
-      console.error(e);
-      outputNode?.remove();
-      outputFrame?.remove();
-      outputVector?.remove();
+    // If the node itself is a geometry node, then outline it
+    // outlineStroke() will return a clone or null
+    if (isGeometryNode(node)) {
+      clone = node.outlineStroke();
     }
-    node.remove();
-    rawSVGNode?.remove();
+    if (clone == null) {
+      clone = node.clone();
+    }
+
+    // Outline any nested strokes if possible
+    if ("findChildren" in clone) {
+      clone
+        .findChildren((child) => isGeometryNode(child))
+        .forEach((child: GeometryNode) => {
+          const vectorNode = child.outlineStroke();
+          if (vectorNode) {
+            child.parent.appendChild(vectorNode);
+            child.remove();
+          }
+        });
+    }
+    const unionNode = figma.union([clone], clone.parent);
+    return unionNode;
   });
 
-  await Promise.all(promises);
+  const flattenedNode = figma.flatten(clones);
+  return flattenedNode;
+}
+
+/**
+ * Flattens a bunch of vector nodes into a single path.
+ * Exporting an SVG then re-importing it is a pretty reliable way of merging
+ * the paths in a vector. Not sure why, but it works.
+ */
+async function reallyFlattenNodes(
+  nodes: readonly SceneNode[]
+): Promise<FrameNode> {
+  if (nodes.length == 0) {
+    throw new Error("No nodes selected");
+  }
+  const nameToUse = nodes.length === 1 ? nodes[0].name : undefined;
+  const flattenedNode = cloneAndFlatten(nodes);
+
+  const firstExport = await flattenedNode.exportAsync({ format: "SVG" });
+  const firstSVGString = String.fromCharCode(...firstExport);
+
+  const outputFrameNode = figma.createNodeFromSvg(firstSVGString);
+  const outputVectorNode = figma.flatten([
+    figma.union(outputFrameNode.children, outputFrameNode),
+  ]);
+  const originalX = flattenedNode.absoluteTransform[0][2];
+  const originalY = flattenedNode.absoluteTransform[1][2];
+  outputFrameNode.x = originalX + flattenedNode.width + 40;
+  outputFrameNode.y = originalY;
+  outputVectorNode.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 } }];
+
+  flattenedNode.remove();
+  if (nameToUse != null) {
+    outputFrameNode.name = `flatten(${nameToUse})`;
+  }
+  return outputFrameNode;
 }
 
 async function main() {
   try {
-    await reallyFlattenNodes();
-  } catch (e) {}
+    const outputNode = await reallyFlattenNodes(figma.currentPage.selection);
+    figma.currentPage.selection = [outputNode];
+  } catch (e) {
+    if (e instanceof Error) {
+      figma.notify(e.message);
+    } else {
+      figma.notify(
+        "Could not flatten vector. Try simplifying the structure, then try again."
+      );
+    }
+    console.error(e);
+  }
   figma.closePlugin();
 }
 

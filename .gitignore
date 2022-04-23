@@ -5,6 +5,8 @@ node_modules
 
 out/
 dist/
+code.js
+code.js.map
 
 # Mac
 .DS_Store

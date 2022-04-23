@@ -13,9 +13,10 @@
     "build": "./node_modules/.bin/parcel build",
     "watch": "./node_modules/.bin/parcel watch"
   },
+  "source": "code.ts",
+  "plugin": "code.js",
   "targets": {
     "plugin": {
-      "source": "code.ts",
       "includeNodeModules": true,
       "context": "browser",
       "outputFormat": "global",

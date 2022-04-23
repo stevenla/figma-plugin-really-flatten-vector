@@ -5,7 +5,7 @@
     // "lib": ["es6"],
     // "moduleResolution": "node",
     "downlevelIteration": true,
-    "esModuleInterop": true,
+    // "esModuleInterop": true,
     // "module": "esnext"
 
     "typeRoots": ["./node_modules/@types", "./node_modules/@figma"]
