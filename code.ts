@@ -80,7 +80,7 @@ function cloneAndFlatten(nodes: readonly SceneNode[]): VectorNode {
  */
 async function reallyFlattenNodes(
   nodes: readonly SceneNode[]
-): Promise<FrameNode> {
+): Promise<VectorNode> {
   if (nodes.length == 0) {
     throw new Error("No nodes selected");
   }
@@ -94,15 +94,6 @@ async function reallyFlattenNodes(
   // Generate a FrameNode containing a VectorNode that has the SVG's
   // overlapping paths merged.
   const outputFrameNode = figma.createNodeFromSvg(exportSVGString);
-  if (nameToUse != null) {
-    outputFrameNode.name = `flatten(${nameToUse})`;
-  }
-  outputFrameNode.clipsContent = false;
-  outputFrameNode.exportSettings = [{ format: "SVG" }];
-  const originalX = flattenedNode.absoluteTransform[0][2];
-  outputFrameNode.x = originalX + flattenedNode.width + 40;
-  const originalY = flattenedNode.absoluteTransform[1][2];
-  outputFrameNode.y = originalY;
 
   // Flatten the VectorNode if multiple vectors were created. This shouldn't
   // happen but it's here for safety.
@@ -110,9 +101,19 @@ async function reallyFlattenNodes(
     figma.union(outputFrameNode.children, outputFrameNode),
   ]);
   outputVectorNode.fills = flattenedNode.fills;
+  outputFrameNode.parent.appendChild(outputVectorNode);
+  const originalX = flattenedNode.absoluteTransform[0][2];
+  outputVectorNode.x = originalX + flattenedNode.width + 40;
+  const originalY = flattenedNode.absoluteTransform[1][2];
+  outputVectorNode.y = originalY;
+  outputVectorNode.exportSettings = [{ format: "SVG" }];
+  if (nameToUse != null) {
+    outputVectorNode.name = `flatten(${nameToUse})`;
+  }
 
+  outputFrameNode.remove();
   flattenedNode.remove();
-  return outputFrameNode;
+  return outputVectorNode;
 }
 
 async function main() {
