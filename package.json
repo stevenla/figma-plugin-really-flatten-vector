@@ -10,6 +10,7 @@
     "typescript": "*"
   },
   "scripts": {
+    "clean": "rm code.js code.js.map",
     "build": "./node_modules/.bin/parcel build",
     "watch": "./node_modules/.bin/parcel watch"
   },
@@ -21,7 +22,7 @@
       "context": "browser",
       "outputFormat": "global",
       "engines": {
-        "browsers": "Chrome 40"
+        "browsers": "Safari 9"
       }
     }
   }

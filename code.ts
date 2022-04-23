@@ -1,7 +1,7 @@
 type GeometryNode = Extract<SceneNode, GeometryMixin>;
 const DEFAULT_PAINT: SolidPaint = {
   type: "SOLID",
-  color: { r: 128, g: 128, b: 128 },
+  color: { r: 0.5, g: 0.5, b: 0.5 },
 };
 
 /**
@@ -30,7 +30,8 @@ function cloneAndFlatten(nodes: readonly SceneNode[]): VectorNode {
       node.type !== "FRAME" &&
       "fills" in node &&
       Array.isArray(node.fills) &&
-      node.fills.length > 0
+      node.fills.length > 0 &&
+      node.fills.some((fill: Paint) => fill.visible === true)
     ) {
       fillToUse = [...node.fills];
     }
@@ -40,12 +41,12 @@ function cloneAndFlatten(nodes: readonly SceneNode[]): VectorNode {
     let clone: SceneNode = node.clone();
     let outlinedNode: VectorNode = null;
 
-    setFillIfNonContainer(node);
+    setFillIfNonContainer(clone);
 
     // This will create a new node with the outlined stroke as a path. Save it
     // and add it to the union for flattening later.
-    if (isGeometryNode(node)) {
-      outlinedNode = node.outlineStroke();
+    if (isGeometryNode(clone)) {
+      outlinedNode = clone.outlineStroke();
       setFillIfNonContainer(outlinedNode);
     }
 
@@ -62,13 +63,13 @@ function cloneAndFlatten(nodes: readonly SceneNode[]): VectorNode {
           }
         });
     }
-    const unionTarget = [clone, outlinedNode].filter((node) => node != null);
+    const unionTarget = [clone, outlinedNode].filter((x) => x != null);
     const unionNode = figma.union(unionTarget, clone.parent);
     return unionNode;
   });
 
   const flattenedNode = figma.flatten(clones);
-  flattenedNode.fills = fillToUse != null ? fillToUse : [DEFAULT_PAINT];
+  flattenedNode.fills = fillToUse?.length ? fillToUse : [DEFAULT_PAINT];
   return flattenedNode;
 }
 
