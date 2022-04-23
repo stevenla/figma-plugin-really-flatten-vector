@@ -18,15 +18,13 @@ function cloneAndFlatten(nodes: readonly SceneNode[]): SceneNode {
   }
 
   const clones = nodes.map((node) => {
-    let clone: SceneNode | null = null;
+    let clone: SceneNode = node.clone();
+    let outlinedNode: VectorNode = null;
 
-    // If the node itself is a geometry node, then outline it
-    // outlineStroke() will return a clone or null
+    // This will create a new node with the outlined stroke as a path. Save it
+    // and add it to the union for flattening later.
     if (isGeometryNode(node)) {
-      clone = node.outlineStroke();
-    }
-    if (clone == null) {
-      clone = node.clone();
+      outlinedNode = node.outlineStroke();
     }
 
     // Outline any nested strokes if possible
@@ -37,11 +35,11 @@ function cloneAndFlatten(nodes: readonly SceneNode[]): SceneNode {
           const vectorNode = child.outlineStroke();
           if (vectorNode) {
             child.parent.appendChild(vectorNode);
-            child.remove();
           }
         });
     }
-    const unionNode = figma.union([clone], clone.parent);
+    const unionTarget = [clone, outlinedNode].filter((node) => node != null);
+    const unionNode = figma.union(unionTarget, clone.parent);
     return unionNode;
   });
 
