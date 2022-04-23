@@ -1,32 +1,27 @@
 {
   "name": "figma-plugin-really-flatten-vectors",
   "version": "1.0.0",
-  "description": "Your Figma Plugin",
-  "dest": "code.js",
-  "source": "code.ts",
+  "description": "Flattens vectors and merges their path networks",
+  "author": "Steven La <mrstevenla@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.44.0",
+    "parcel": "^2.5.0",
+    "typescript": "*"
+  },
   "scripts": {
     "build": "./node_modules/.bin/parcel build",
     "watch": "./node_modules/.bin/parcel watch"
   },
   "targets": {
-    "dest": {
+    "plugin": {
+      "source": "code.ts",
       "includeNodeModules": true,
       "context": "browser",
-      "outputFormat": "global"
+      "outputFormat": "global",
+      "engines": {
+        "browsers": "Chrome 40"
+      }
     }
-  },
-  "author": "Steven La <mrstevenla@gmail.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "@figma/plugin-typings": "^1.44.0",
-    "@parcel/transformer-typescript-tsc": "^2.5.0",
-    "@rollup/plugin-typescript": "^8.3.2",
-    "parcel": "^2.5.0",
-    "rollup": "^2.70.2",
-    "typescript": "*"
-  },
-  "dependencies": {
-    "@types/dom-parser": "^0.1.1",
-    "dom-parser": "^0.1.6"
   }
 }

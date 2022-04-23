@@ -8,3 +8,6 @@ dist/
 
 # Mac
 .DS_Store
+
+# Parcel
+.parcel-cache
