@@ -1,5 +1,7 @@
 # Really Flatten Vectors
 
+Plugin link: https://www.figma.com/community/plugin/1099596352042014853/Really-Flatten-Vectors
+
 Figma plugin that flattens a vector into as few paths as possible. Overlapping
 paths will be simplified so only the outer shape is defined. The flattening
 happens in-place and "deletes" the old layers, so be careful!
